@@ -18,14 +18,14 @@
     </el-row-->
     <el-row style="margin-top:30px">
       <el-col :span="22" :offset="1">
-        <el-table :data="AllTask" height="600" border style="width:100%">
+        <el-table :data="AllTask" height="600" border style="width:100%; text-align:center;">
           <el-table-column prop="num" label="序号" width="50"></el-table-column>
           <el-table-column prop="taskname" label="任务包名" width="200"></el-table-column>
           <el-table-column prop="name" label="负责人名" width="100"></el-table-column>
           <el-table-column prop="start" label="开始时间" width="120"></el-table-column>
           <el-table-column prop="end" label="结束时间" width="120"></el-table-column>
           <el-table-column prop="state" label="状态" width="100"></el-table-column>
-          <el-table-column prop="percent" label="任务量百分比" width="80"></el-table-column>
+          <el-table-column prop="percent" label="任务量百分比" width="150"></el-table-column>
           <el-table-column label="操作">
            <template scope="scope">
               <el-button @click.native.prevent="Detail(scope.$index,AllTask)" type="text" size="small"> 查看详情 </el-button>
@@ -78,24 +78,27 @@ export default{
 },
   mounted() {
     //向后台发送axios信息获取登录信息进行表格填充
-   Axios.get('./mock/AllTask.json')
-// Axios.get('http://10.246.19.47:8009/stu')
+//   Axios.get('./mock/AllTask.json')
+ Axios.get('/api/stu')
   .then(function(res){
       //成功获取json数据信息的话
       //console.log(res.data.AllTask[0]);
       var tem=[];
       var len=res.data.AllTask.length;
+      var state_flag;
       for (var i = 0; i < len; i++)
        {
+         if(res.data.AllTask[i].state<0) state_flag="结束";
+         else state_flag="进行中";
          tem.push({
            num:i+1,
            taskname:res.data.AllTask[i].taskname,
            name:res.data.AllTask[i].name,
            start:res.data.AllTask[i].start,
            end:res.data.AllTask[i].end,
-           state:res.data.AllTask[i].state,
-           percent:res.data.AllTask[i].percent
-         })
+           percent:res.data.AllTask[i].percent,
+           state:state_flag,
+         });
       }
       this.AllTask=tem;
     }.bind(this)

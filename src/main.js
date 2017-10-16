@@ -24,7 +24,8 @@ router.beforeEach((to,from,next)=>{
     next({path:'/login'});
   }
   else{
-    next();
+      next()
+
   }
 });
 /* eslint-disable no-new */

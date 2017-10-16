@@ -40,36 +40,7 @@
 
     <div class="Sir" v-if="ifSir">
       <!--ifsir整个由新建任务的区域引进,区别在于把之前获得的后台信息填充到表格里面（母组件对于子组件的变量的处理）-->
-      <el-form :model="sirForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" style="margin-left:150px;">
-      <el-form-item label="任务名称" prop="name" style="width: 500px;">
-        <el-input v-model="sirForm.name"></el-input>
-      </el-form-item>
-    <el-form-item label="任务时间" required>
-        <el-col :span="7">
-          <el-form-item prop="date1">
-            <el-date-picker type="date" placeholder="开始日期" v-model="sirForm.start" style="width: 100%;"></el-date-picker>
-          </el-form-item>
-        </el-col>
-        <el-col class="line" :span="1">---</el-col>
-        <el-col :span="7">
-            <el-form-item prop="date2">
-              <el-date-picker type="date" placeholder="截止日期" v-model="sirForm.end" style="width: 100%;"></el-date-picker>
-            </el-form-item>
-        </el-col>
-    </el-form-item>
-    <el-form-item label="组长" prop="leader" style="width: 500px;">
-        <el-input v-model="sirForm.leader"></el-input>
-      </el-form-item>
-      <el-form-item label="成员" prop="member" style="width: 500px;">
-        <el-input v-model="sirForm.member"></el-input>
-      </el-form-item>
-      <el-form-item label="目标百分比" prop="goal" style="width: 500px;">
-        <el-input v-model="sirForm.goal"></el-input>
-      </el-form-item>
-      <el-form-item label="需求描述" prop="desc" style="width: 500px;">
-        <el-input type="textarea" v-model="sirForm.desc" ></el-input>
-      </el-form-item>
-    </el-form>
+
   </div>
 
   <div class="Stu" v-if="ifStu">
@@ -290,6 +261,7 @@ export default{
      },
 
        submitForm(formName){
+          var taskname=this.$store.state.taskid;
           var len=this.$refs[formName].length;
           var flag=true;
           for(var i=0;i<len;i++){
@@ -305,9 +277,10 @@ export default{
           //信息验证成功
           this. dialogFormVisible=false;  //关闭表单的信息
           var context=JSON.stringify(this.StuForms);
+          console.log(this.StuForms);
           console.log(context);
           //向后台提交信息
-          Axios.post("http://localhost:8080/#/Stu/ManageTask", context, { headers: { 'Content-Type': 'application/json' } })
+          Axios.post("/api/managetask?task="+taskname, context, { headers: { 'Content-Type': 'application/json' } })
            .then(function(res){
             console.log("success");
           })
@@ -315,7 +288,7 @@ export default{
              console.log("fail");
          })
         //重新刷新数据
-        Axios.get('./mock/ManageTask.json')
+        Axios.get('/api/managetask?task='+taskname)
        .then(function(res){
            var tem=[];
            var axios_stuforms=[];
@@ -352,7 +325,7 @@ export default{
      },
 
      //配置到每个表单中，选择性的删除某一个表单
-     removeMission(item) {
+     removeMission(item){
         var index = this.StuForms.indexOf(item)
         if (index !== -1) {
          this.StuForms.splice(index,1);
@@ -373,21 +346,27 @@ export default{
   },
 mounted() {
     //向后台发送axios信息获取登录信息进行表格填充
-  // Axios.get('http://39.108.181.155:8009/managetask?task="实验室任务管理"')
-   Axios.get('./mock/ManageTask.json')
+   var taskname=this.$store.state.taskid;
+   Axios.get('/api/managetask?task='+taskname)
+//   Axios.get('./mock/ManageTask.json')
   .then(function(res){
       this.start=res.data.start;
       this.end=res.data.end;
       this.actor=res.data.actor;
       this.groPeo=res.data.groPeo;
       this.desc=res.data.desc;
+      var i;
       //填充下拉列表
       this.peoptions.push(res.data.actor);
+      var peolen=res.data.groPeo.length;
+      for (i=0;i<peolen;i++){
+        this.peoptions.push(res.data.groPeo[i]);
+      }
       //this.peoptions.push(res.data.)
       var tem=[];
       var axios_stuforms=[];
       var len=res.data.TaskDetail.length;
-      for (var i = 0; i < len; i++)
+      for (i = 0; i < len; i++)
        {
          tem.push({
            misname:res.data.TaskDetail[i].misname,
@@ -413,7 +392,7 @@ mounted() {
      let name=user.username;
      //console.log(this.$store.state.Sir==name)
       if(name==this.actor)  {this.editvisible=true;this.ifStu=true}
-      if(name==this.$store.state.Sir){this.editvisible=true;this.ifSir=true}
+      if(name==this.$store.state.Sir){this.editvisible=false;this.ifSir=true}
     }.bind(this)
    ).catch(function(){
      console.log("出现错误");

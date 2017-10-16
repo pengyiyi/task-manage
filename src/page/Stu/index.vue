@@ -1,37 +1,42 @@
 <template>
-  <div id="app">
-    <header1></header1>
-    <!--左侧导航栏-->
-    <main>
-      <div class="main-left">
-        <el-menu default-active="/Stu" class="el-menu-vertical-demo" :router="true">
-          <el-menu-item index="/Stu">实验室任务概览</el-menu-item>
-          <el-menu-item index="/Stu/MyTask">个人页</el-menu-item>
-          <el-menu-item index="/Stu/ManageTask">任务管理</el-menu-item>
-        </el-menu>
-      </div>
-
-      <div　class="main-right">
+  <div>
+    <HelloStu>
         <transition name="fade">
           <router-view class="view"></router-view>
         </transition>
-      </div>
-    </main>
+    </HelloStu>
   </div>
 </template>
 
 <script>
-   import header1 from '@/components/header.vue'
+   import HelloStu from '@/components/HelloStu.vue'
    export default {
      name: 'app',
-     components: {header1},
-       data(){
-         return{
-           active:true
-         }
-       },
-}
+     components: {HelloStu},
+     data () {
+       return{
+       }
+     }
+   }
 </script>
+
+<style>
+.fade-enter-active, .fade-leave-active {
+    transition: all .5s;
+  }
+  .fade-enter, .fade-leave-active {
+    opacity: 0;
+  }
+
+  .list-enter-active, .list-leave-active {
+    transition: all 1s;
+  }
+  .list-enter, .list-leave-active {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+</style>
+
 
 <style>
 body{

@@ -37,8 +37,8 @@ export default{
   mounted(){
     //do something after mounting vue instance
     var user=JSON.parse(sessionStorage.getItem('user'));
-    Axios.get('./mock/MyTask.json')
-   // Axios.get('http://10.246.19.47:8009/Stu/MyTask?name='+user.username)
+    //Axios.get('./mock/MyTask.json')
+   Axios.get('/api/Stu/MyTask?name='+user.username)
    .then(function(res){
        //成功获取json数据信息的话
       // console.log(res.data.percent);

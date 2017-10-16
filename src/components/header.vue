@@ -1,76 +1,99 @@
 <template>
-	<div id="app">
-	<header class="header" :class="{'header-fixed':headerFixed}">
-		<el-row>
-   		<el-col :span="24">
-     	<el-col :span="10" class="logo">
-				{{sysName}}
-			</el-col>
-			<el-col :span="4" class="userinfo">
-				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"> {{sysUserName}}</span>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item @click.native="person" >个人中心</el-dropdown-item>
-						<el-dropdown-item  @click.native="logout">退出登录</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
-			</el-col>
-		</el-col>
-	</el-row>
+  <div id="app">
+  <header class="header" :class="{'header-fixed':headerFixed}">
+    <el-row>
+      <el-col :span="24">
+      <el-col :span="10" class="logo">
+        {{sysName}}
+      </el-col>
+      <el-col :span="4" class="userinfo">
+        <el-dropdown trigger="hover">
+          <span class="el-dropdown-link userinfo-inner"> {{sysUserName}}</span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="person" >个人中心</el-dropdown-item>
+            <el-dropdown-item  @click.native="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </el-col>
+  </el-row>
 </header>
 </div>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				sysName:'实验室任务管理',
-				sysUserName: 'hhh',
-				headerFixed:true
-			}
-		},
-		methods: {
-			//退出登录
-			logout() {
-				var _this = this;
-				this.$confirm('确认退出吗?', '提示', {
-					//type: 'warning'
-				}).then(() => {
-					sessionStorage.removeItem('user');
-					_this.$router.push('/login');
-				}).catch(() => {
+export default {
+    data(){
+        return {
+            searchCriteria: '',
+            sysName:'实验室任务管理',
+            sysUserName: 'hhh',
+            headerFixed:true
+        }
+    },
 
-				});
-			},
-			person(){
-				//进入到个人页，先判断身份，如果是学长进入到所有学生的管理页，如果是学生进入他的个人页
-				var user=JSON.parse(sessionStorage.getItem('user'));
-				var _this=this;
-				//对user进行验证
-				if(user.username=="赵振华"){
-					//如果是学长(确定后台学长的username)
-					_this.$router.push('/Sir/Allpeople');
-				}
-				else{
-					//是学生
-					_this.$router.push('/Stu/Mytask');
-				}
+    methods:{
+      logout() {
+        var _this = this;
+        this.$confirm('确认退出吗?', '提示', {
+          //type: 'warning'
+        }).then(() => {
+          sessionStorage.removeItem('user');
+          _this.$router.push('/login');
+        }).catch(() => {
 
-			}
-		},
-		mounted() {
-			var user = sessionStorage.getItem('user');
-			if (user) {
-				user = JSON.parse(user);
-				this.sysUserName = user.username || '';
-			}
-		}
-	}
+        });
+      },
+      person(){
+        //进入到个人页，先判断身份，如果是学长进入到所有学生的管理页，如果是学生进入他的个人页
+        var user=JSON.parse(sessionStorage.getItem('user'));
+        var _this=this;
+        //对user进行验证
+        if(user.username=="赵振华"){
+          //如果是学长(确定后台学长的username)
+          _this.$router.push('/Sir/Allpeople');
+        }
+        else{
+          //是学生
+          _this.$router.push('/Stu/Mytask');
+        }
+      },
+        handleSelect(key, keyPath){
+            switch(key){
+                case '1':
+                    this.$router.push('/Sir/AllTask');
+                    this.breadcrumbItems  = ['任务概览']
+                    break;
+                case '2':
+                    this.$router.push('/Sir/NewTask')
+                    this.breadcrumbItems  = ['发布任务']
+                    break;
+                case '3':
+                    this.$router.push('/Sir/AllPeople')
+                    this.breadcrumbItems  = ['人员管理']
+                    break;
+            }
+        },
+    },
+    mounted(){
+        var user = sessionStorage.getItem('user');
+        if (user) {
+            user = JSON.parse(user);
+            this.sysUserName = user.username || '';
+        }
+    }
+}
 </script>
 
 <style>
-body{margin:0;}
+body {
+background:url('../images/timg.jpg') repeat 0px 0px;
+height: 100%;
+background-size: cover;
+font-family: 'Open Sans', sans-serif;
+background-attachment: fixed;
+background-position: center;
+}
 #app{
 	min-width: 1200px;
 	margin: 0 auto;
